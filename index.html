@@ -13,20 +13,17 @@
 
   <!-- CesiumJS -->
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.131/Build/Cesium/Cesium.js"></script>
-  <link  href="https://cesium.com/downloads/cesiumjs/releases/1.131/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.131/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 
   <!-- SunCalc for the day/night terminator -->
   <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
 
   <script>
-    /* ----- 1.  Cesium viewer ----- */
-    Cesium.Ion.defaultAccessToken =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlYWE1OWUxNy1mMWZiLTQzYjYtYTQ0OS1kMWFjYmFkNjc5YzciLCJpZCI6NTc3MzMsImlhdCI6MTYyNzg0NTE4Mn0.XcKpgANiY19MC4xFvfN7B6sfNn-er0F1b2d1a-J4Z4E';
-
+    /* 1.  Cesium viewer with OpenStreetMap imagery (no keys, always works) */
     const viewer = new Cesium.Viewer('globe', {
-      imageryProvider: new Cesium.BingMapsImageryProvider({
-        url: 'https://dev.virtualearth.net',
-        mapStyle: Cesium.BingMapsStyle.AERIAL
+      imageryProvider: new Cesium.UrlTemplateImageryProvider({
+        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        maximumLevel: 19
       }),
       baseLayerPicker: false,
       geocoder: false,
@@ -41,7 +38,7 @@
 
     viewer.scene.globe.enableLighting = true;
 
-    /* ----- 2.  Live day / night shadow ----- */
+    /* 2.  Live day / night shadow */
     const nightLayer = viewer.entities.add({
       name: 'Night',
       polygon: {
@@ -69,7 +66,7 @@
 
     setInterval(() => nightLayer.polygon.hierarchy = updateNightPolygon(), 60_000);
 
-    /* ----- 3.  Gentle auto-rotation ----- */
+    /* 3.  Gentle auto-rotation */
     viewer.clock.onTick.addEventListener(() => {
       viewer.scene.camera.rotateRight(0.0005);
     });
