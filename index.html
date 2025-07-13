@@ -2,73 +2,72 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <title>Live 3-D Earth – clouds + day/night</title>
+  <title>Live 3-D Earth – Three.js</title>
   <style>
-    html,body{margin:0;height:100%;overflow:hidden;background:#000}
-    #globe{width:100%;height:100%}
+    body{margin:0;height:100vh;background:#000;overflow:hidden}
+    #globe{width:100%;height:100%;display:block}
   </style>
 </head>
 <body>
   <div id="globe"></div>
 
-  <!-- CesiumJS -->
-  <script src="https://cesium.com/downloads/cesiumjs/releases/1.131/Build/Cesium/Cesium.js"></script>
-  <link href="https://cesium.com/downloads/cesiumjs/releases/1.131/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
-
-  <!-- SunCalc for the day/night terminator -->
-  <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
+  <!-- Three.js -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
 
   <script>
-    /* 1.  Cesium viewer with OpenStreetMap imagery (no keys, always works) */
-    const viewer = new Cesium.Viewer('globe', {
-      imageryProvider: new Cesium.UrlTemplateImageryProvider({
-        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-        maximumLevel: 19
-      }),
-      baseLayerPicker: false,
-      geocoder: false,
-      homeButton: false,
-      sceneModePicker: false,
-      navigationHelpButton: false,
-      animation: false,
-      timeline: false,
-      fullscreenButton: false,
-      vrButton: false
+    const w = window.innerWidth, h = window.innerHeight;
+    const scene   = new THREE.Scene();
+    const camera  = new THREE.PerspectiveCamera(45, w/h, 0.1, 1000);
+    const renderer= new THREE.WebGLRenderer({antialias:true});
+    renderer.setSize(w,h);
+    document.getElementById('globe').appendChild(renderer.domElement);
+
+    /* Earth sphere */
+    const loader = new THREE.TextureLoader();
+    const earthGeo = new THREE.SphereGeometry(5, 64, 64);
+    const earthMat = new THREE.MeshPhongMaterial({
+      map: loader.load('https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73909/world.topo.bathy.200407.3x2048x1024.jpg')
     });
+    const earthMesh = new THREE.Mesh(earthGeo, earthMat);
+    scene.add(earthMesh);
 
-    viewer.scene.globe.enableLighting = true;
+    /* Day/night shadow plane (simple terminator) */
+    const nightMat = new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:0.35});
+    const nightGeo = new THREE.SphereGeometry(5.01, 64, 64);
+    const nightMesh = new THREE.Mesh(nightGeo, nightMat);
+    scene.add(nightMesh);
 
-    /* 2.  Live day / night shadow */
-    const nightLayer = viewer.entities.add({
-      name: 'Night',
-      polygon: {
-        hierarchy: new Cesium.CallbackProperty(updateNightPolygon, false),
-        material: Cesium.Color.BLACK.withAlpha(0.4),
-        height: 0,
-        extrudedHeight: 0
-      }
-    });
+    /* Lights */
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1);
+    scene.add(sunLight);
 
-    function updateNightPolygon() {
-      const now = new Date();
-      const positions = [];
-      const step = 5;
-      for (let lon = -180; lon <= 180; lon += step) {
-        for (let lat = -90; lat <= 90; lat += step) {
-          const sunPos = SunCalc.getPosition(now, lat, lon);
-          if (sunPos.altitude < 0) positions.push(Cesium.Cartesian3.fromDegrees(lon, lat, 0));
-        }
-      }
-      return new Cesium.PolygonHierarchy(
-        Cesium.Cartesian3.fromDegreesArray([-180, -90, 180, -90, 180, 90, -180, 90, -180, -90])
+    /* Camera & controls */
+    camera.position.set(0, 0, 15);
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    /* Update sun direction every frame */
+    function animate() {
+      requestAnimationFrame(animate);
+      const now = Date.now() * 0.0001;
+      sunLight.position.set(
+        Math.cos(now) * 20,
+        0,
+        Math.sin(now) * 20
       );
+      earthMesh.rotation.y += 0.0005;
+      nightMesh.rotation.copy(earthMesh.rotation);
+      controls.update();
+      renderer.render(scene, camera);
     }
+    animate();
 
-    setInterval(() => nightLayer.polygon.hierarchy = updateNightPolygon(), 60_000);
-
-    /* 3.  Gentle auto-rotation */
-    viewer.clock.onTick.addEventListener(() => {
-      viewer.scene.camera.rotateRight(0.0005);
+    /* Resize handler */
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
     });
   </script>
 </body>

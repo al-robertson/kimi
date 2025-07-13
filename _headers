@@ -1,2 +1,0 @@
-/*
-  Content-Security-Policy: script-src 'self' 'unsafe-eval' https://cesium.com https://unpkg.com; object-src 'none'; base-uri 'self';
