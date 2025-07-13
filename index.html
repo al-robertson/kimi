@@ -1,125 +1,97 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2487">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  <meta charset="utf-8"/>
+  <title>Live 3-D Earth – clouds + day/night</title>
+  <style>
+    html,body{margin:0;height:100%;overflow:hidden;background:#000}
+    #globe {width:100%;height:100%;}
   </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;Live 3-D Earth – clouds + day/night&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>html,body{margin:0;height:100%;overflow:hidden;background:#000}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>#globe {width:100%;height:100%;}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="globe"&gt;&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- CesiumJS (globe engine) --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;link<span class="Apple-converted-space">  </span>href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet" /&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- SunCalc for the day/night terminator --&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"&gt;&lt;/script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>/* -------------------------------------------------</p>
-<p class="p1"><span class="Apple-converted-space">       </span>1.<span class="Apple-converted-space">  </span>Set up Cesium</p>
-<p class="p1"><span class="Apple-converted-space">    </span>------------------------------------------------- */</p>
-<p class="p1"><span class="Apple-converted-space">    </span>Cesium.Ion.defaultAccessToken =</p>
-<p class="p1"><span class="Apple-converted-space">      </span>'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlYWE1OWUxNy1mMWZiLTQzYjYtYTQ0OS1kMWFjYmFkNjc5YzciLCJpZCI6NTc3MzMsImlhdCI6MTYyNzg0NTE4Mn0.XcKpgANiY19MC4xFvfN7B6sfNn-er0F1b2d1a-J4Z4E';</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const viewer = new Cesium.Viewer('globe', {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>geocoder <span class="Apple-converted-space">      </span>: false,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>homeButton <span class="Apple-converted-space">    </span>: false,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>sceneModePicker: false,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>baseLayerPicker: false,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>navigationHelpButton: false,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>animation<span class="Apple-converted-space">      </span>: false,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>timeline <span class="Apple-converted-space">      </span>: false,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>fullscreenButton: false,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>vrButton <span class="Apple-converted-space">      </span>: false</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>viewer.scene.globe.enableLighting = true;<span class="Apple-converted-space">      </span>// Let Cesium light the globe</p>
-<p class="p1"><span class="Apple-converted-space">    </span>viewer.scene.globe.tileCacheSize<span class="Apple-converted-space">  </span>= 1000;<span class="Apple-converted-space">      </span>// Keep cloud tiles in GPU RAM</p>
-<p class="p1"><span class="Apple-converted-space">    </span>viewer.scene.globe.depthTestAgainstTerrain = false;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>/* -------------------------------------------------</p>
-<p class="p1"><span class="Apple-converted-space">       </span>2.<span class="Apple-converted-space">  </span>Live cloud imagery layer</p>
-<p class="p1"><span class="Apple-converted-space">           </span>Zoom Earth composites are 512×512 tiles in</p>
-<p class="p1"><span class="Apple-converted-space">           </span>the standard Web-Mercator scheme.</p>
-<p class="p1"><span class="Apple-converted-space">           </span>URL pattern: https://tile.zoom.earth/globe/{z}/{x}/{y}.jpg</p>
-<p class="p1"><span class="Apple-converted-space">           </span>Updated ~10 min behind real time.</p>
-<p class="p1"><span class="Apple-converted-space">    </span>------------------------------------------------- */</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const cloudProvider = new Cesium.UrlTemplateImageryProvider({</p>
-<p class="p1"><span class="Apple-converted-space">      </span>url : 'https://tile.zoom.earth/globe/{z}/{x}/{y}.jpg',</p>
-<p class="p1"><span class="Apple-converted-space">      </span>maximumLevel: 8</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>viewer.imageryLayers.addImageryProvider(cloudProvider);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>/* -------------------------------------------------</p>
-<p class="p1"><span class="Apple-converted-space">       </span>3.<span class="Apple-converted-space">  </span>Real-time day / night</p>
-<p class="p1"><span class="Apple-converted-space">           </span>We create a moving polygon that darkens the</p>
-<p class="p1"><span class="Apple-converted-space">           </span>night side using SunCalc’s solar terminator.</p>
-<p class="p1"><span class="Apple-converted-space">           </span>We refresh every minute.</p>
-<p class="p1"><span class="Apple-converted-space">    </span>------------------------------------------------- */</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const nightLayer = viewer.entities.add({</p>
-<p class="p1"><span class="Apple-converted-space">      </span>name : 'Night',</p>
-<p class="p1"><span class="Apple-converted-space">      </span>polygon : {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>hierarchy : new Cesium.CallbackProperty(updateNightPolygon, false),</p>
-<p class="p1"><span class="Apple-converted-space">        </span>material<span class="Apple-converted-space">  </span>: Cesium.Color.BLACK.withAlpha(0.4),</p>
-<p class="p1"><span class="Apple-converted-space">        </span>height<span class="Apple-converted-space">    </span>: 0,</p>
-<p class="p1"><span class="Apple-converted-space">        </span>extrudedHeight: 0</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function updateNightPolygon() {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const now = new Date();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const positions = [];</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const step = 5; // degrees</p>
-<p class="p1"><span class="Apple-converted-space">      </span>for (let lon = -180; lon &lt;= 180; lon += step) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>for (let lat = -90; lat &lt;= 90; lat += step) {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const sunPos = SunCalc.getPosition(now, lat, lon);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>if (sunPos.altitude &lt; 0) { <span class="Apple-converted-space">              </span>// nighttime</p>
-<p class="p1"><span class="Apple-converted-space">            </span>positions.push(Cesium.Cartesian3.fromDegrees(lon, lat, 0));</p>
-<p class="p1"><span class="Apple-converted-space">          </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Cesium expects a convex polygon, so we wrap the globe in a big rectangle</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// and punch holes for the day side. A simpler hack: just draw the</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// solar terminator line as a wall. Here we do a quick-and-dirty</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// approximation that still looks good at most zooms.</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const wall = Cesium.PolygonHierarchy(</p>
-<p class="p1"><span class="Apple-converted-space">        </span>Cesium.Cartesian3.fromDegreesArray([</p>
-<p class="p1"><span class="Apple-converted-space">          </span>-180, -90, 180, -90, 180, 90, -180, 90, -180, -90</p>
-<p class="p1"><span class="Apple-converted-space">        </span>])</p>
-<p class="p1"><span class="Apple-converted-space">      </span>);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return wall;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Refresh the shadow every minute</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setInterval(() =&gt; nightLayer.polygon.hierarchy = updateNightPolygon(), 60_000);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>/* -------------------------------------------------</p>
-<p class="p1"><span class="Apple-converted-space">       </span>4.<span class="Apple-converted-space">  </span>Optional: auto-rotate camera</p>
-<p class="p1"><span class="Apple-converted-space">    </span>------------------------------------------------- */</p>
-<p class="p1"><span class="Apple-converted-space">    </span>viewer.clock.onTick.addEventListener(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const camera = viewer.scene.camera;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>camera.rotateRight(0.0005); // gentle spin</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+  <div id="globe"></div>
+
+  <!-- CesiumJS (globe engine) -->
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet"/>
+
+  <!-- SunCalc for the day/night terminator -->
+  <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
+
+  <script>
+    /* -------------------------------------------------
+       1.  Set up Cesium
+    ------------------------------------------------- */
+    Cesium.Ion.defaultAccessToken =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlYWE1OWUxNy1mMWZiLTQzYjYtYTQ0OS1kMWFjYmFkNjc5YzciLCJpZCI6NTc3MzMsImlhdCI6MTYyNzg0NTE4Mn0.XcKpgANiY19MC4xFvfN7B6sfNn-er0F1b2d1a-J4Z4E';
+
+    const viewer = new Cesium.Viewer('globe', {
+      geocoder       : false,
+      homeButton     : false,
+      sceneModePicker: false,
+      baseLayerPicker: false,
+      navigationHelpButton: false,
+      animation      : false,
+      timeline       : false,
+      fullscreenButton: false,
+      vrButton       : false
+    });
+
+    viewer.scene.globe.enableLighting = true;
+    viewer.scene.globe.tileCacheSize  = 1000;
+    viewer.scene.globe.depthTestAgainstTerrain = false;
+
+    /* -------------------------------------------------
+       2.  Live cloud imagery layer
+    ------------------------------------------------- */
+    const cloudProvider = new Cesium.UrlTemplateImageryProvider({
+      url : 'https://tile.zoom.earth/globe/{z}/{x}/{y}.jpg',
+      maximumLevel: 8
+    });
+    viewer.imageryLayers.addImageryProvider(cloudProvider);
+
+    /* -------------------------------------------------
+       3.  Real-time day / night
+    ------------------------------------------------- */
+    const nightLayer = viewer.entities.add({
+      name : 'Night',
+      polygon : {
+        hierarchy : new Cesium.CallbackProperty(updateNightPolygon, false),
+        material  : Cesium.Color.BLACK.withAlpha(0.4),
+        height    : 0,
+        extrudedHeight: 0
+      }
+    });
+
+    function updateNightPolygon() {
+      const now = new Date();
+      const positions = [];
+      const step = 5; // degrees
+      for (let lon = -180; lon <= 180; lon += step) {
+        for (let lat = -90; lat <= 90; lat += step) {
+          const sunPos = SunCalc.getPosition(now, lat, lon);
+          if (sunPos.altitude < 0) {
+            positions.push(Cesium.Cartesian3.fromDegrees(lon, lat, 0));
+          }
+        }
+      }
+      const wall = new Cesium.PolygonHierarchy(
+        Cesium.Cartesian3.fromDegreesArray([
+          -180, -90, 180, -90, 180, 90, -180, 90, -180, -90
+        ])
+      );
+      return wall;
+    }
+
+    setInterval(() => nightLayer.polygon.hierarchy = updateNightPolygon(), 60_000);
+
+    /* -------------------------------------------------
+       4.  Optional: auto-rotate camera
+    ------------------------------------------------- */
+    viewer.clock.onTick.addEventListener(() => {
+      const camera = viewer.scene.camera;
+      camera.rotateRight(0.0005);
+    });
+  </script>
 </body>
 </html>
